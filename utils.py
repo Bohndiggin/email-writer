@@ -1,5 +1,7 @@
 import csv
 
+document_types = []
+
 class AuthorStyle:
     def __init__(self, name, lines, document_types=[]) -> None:
         self.name = name
