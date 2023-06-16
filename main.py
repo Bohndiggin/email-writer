@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from disp import *
 
-v_num = 0.001
+v_num = 0.01
 
 root = Tk()
 root.title(f"email_crafter {v_num}")
