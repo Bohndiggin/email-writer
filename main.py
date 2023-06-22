@@ -1,15 +1,22 @@
 import sys
+import typing
+
+from PyQt6 import QtCore
 from utils import *
 
 from PyQt6.QtWidgets import (
-    QApplication, QDialog, QMainWindow, QMessageBox
+    QApplication, QDialog, QFileDialog, QMainWindow, QMessageBox, QWidget
 )
 from PyQt6.uic import loadUi
 
 from ui import Ui_MainWindow
 
-def main():
-    window = Ui_MainWindow()
+# class FileLoader(QDialog):
+#     def __init__(self, parent=None) -> None:
+#         super().__init__(parent)
+#         self.setupUi(self)
+
+
 
 class Window(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
@@ -18,7 +25,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.connectSignalsSlots()
 
     def connectSignalsSlots(self):
-        self.actionOpen_Set.triggered.connect(self.placeholder_command)
+        self.actionNew_Set.triggered.connect(self.placeholder_command)
+        self.actionOpen_Set.triggered.connect(self.open_set)
         self.actionSave_Set.triggered.connect(self.placeholder_command)
         self.actionSave_Set_As.triggered.connect(self.placeholder_command)
         self.actionLoad_Batch.triggered.connect(self.placeholder_command)
@@ -37,8 +45,18 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushButtonNext.clicked.connect(self.placeholder_command)
         # self.pushButtonSend.clicked.connect(self.placeholder_command)
 
+        
+
     def placeholder_command(self):
         print('event triggered')
+
+    def open_set(self):
+        self.dialog = QFileDialog()
+        self.dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        if self.dialog.exec():
+            selected_files = self.dialog.selectedFiles()
+        print(selected_files)
+        return selected_files
 
 
 if __name__ == '__main__':
