@@ -72,13 +72,13 @@ class Window(QMainWindow, Ui_MainWindow):
         self.sync_list_and_objects()
         return new_author
 
-    def load_document(self, name, description, authors):
-        new_document = DocumentType(name, description, authors)
+    def load_document(self, name, description):
+        new_document = DocumentType(name, description)
         new_list_item = QStandardItem(name)
         self.doc_item_list.append(new_list_item)
         self.parentItem.appendRow(new_list_item)
-        for i in authors:
-            new_list_item.appendRow(QStandardItem(i.author_name))
+        # for i in authors:
+        #     new_list_item.appendRow(QStandardItem(i.author_name))
         self.columnView.setModel(self.disp_model)
         return new_document
         
@@ -146,16 +146,11 @@ class Window(QMainWindow, Ui_MainWindow):
             pass
 
     def open_set(self, filepath=None):
-        # self.authors = []
         self.documents = []
         def load_json_data(data):
-            # for i in data['authors']:
-            #     self.authors.append(AuthorStyle(i['author_name'], i['lines'], i['document_writes']))
             for i in data['documents']:
-                author_list = []
-                for j in i['doc_authors']:
-                    author_list.append(AuthorStyle(j['author_name'], j['lines'], j['document_writes']))
-                self.documents.append(DocumentType(i['doc_name'], i['description'], author_list))
+                new_doc = DocumentType(i['doc_name'], i['description'])
+                self.documents.append(new_doc)
             
         if not filepath:
             self.dialog = QFileDialog()
@@ -171,10 +166,9 @@ class Window(QMainWindow, Ui_MainWindow):
                 load_json_data(loaded_json)
 
     def test_set(self):
-        test_authors = []
-        test_authors.append(self.make_author('Joe', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], 'testdoc'))
-        test_authors.append(self.make_author('Joe2', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], 'testdoc'))
-        self.documents.append(self.load_document('testdoc', 'this is a test', test_authors))
+        self.documents.append(self.load_document('testdoc', 'this is a test'))
+        self.make_author('Joe', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], self.documents[-1])
+        self.make_author('Joe2', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], self.documents[-1])
 
 # make it so that when it makes a new author it attaches them to a document. Docs first, authors second!
 
@@ -184,7 +178,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1.json')
         self.open_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1.json')
         self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test2.json')
-        self.make_author('james', [['I', 'Me'], ['no', 'dont'], ['speak', 'talk']], self.documents[0].doc_name)
+        self.make_author('james', [['I', 'Me'], ['no', 'dont'], ['speak', 'talk']], self.documents[-1])
+        self.quicksave()
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)

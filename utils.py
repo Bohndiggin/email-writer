@@ -8,13 +8,13 @@ class AuthorStyle:
     def __init__(self, name, lines: list, document_type) -> None:
         self.author_name = name
         self.lines = lines
-        self.document_writes = document_type
+        document_type.doc_authors.append(self)
 
     def export_style(self):
         pass # makes csv of the style
 
     def __repr__(self) -> str:
-        return f'{self.name} is an author Style'
+        return f'{self.author_name} is an author Style'
 
 class DocumentType:
     def __init__(self, name, description, authors=[]) -> None:
@@ -24,7 +24,7 @@ class DocumentType:
         # self.form_fillables = []
     
     def __repr__(self) -> str:
-        return f'{self.name}: {self.description}'
+        return f'{self.doc_name}: {self.description}, with Author Styles: {self.doc_authors}'
     
     def build_fillables(self):
         pass # will build a list of fillables based on self.authors???
