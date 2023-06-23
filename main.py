@@ -1,15 +1,12 @@
 import sys
 import csv
 import json
-from json import JSONEncoder
 
-from PyQt6 import QtCore
 from utils import *
 
 from PyQt6.QtWidgets import (
-    QApplication, QDialog, QFileDialog, QMainWindow, QMessageBox, QWidget, QColumnView
+    QApplication, QFileDialog, QMainWindow,
 )
-from PyQt6.QtCore import QStringListModel
 from PyQt6.uic import loadUi
 from PyQt6.QtGui import QStandardItemModel, QStandardItem
 
@@ -20,7 +17,6 @@ class Window(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.connectSignalsSlots()
-        # self.authors = []
         self.documents = []
         self.recipients = []
         self.disp_model = QStandardItemModel()
@@ -67,8 +63,6 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def make_author(self, name, lines: list, document_type):
         new_author = AuthorStyle(name, lines, document_type)
-        # self.authors_model.insertRow(self.authors_model.rowCount())
-        # self.authors_model.setData(self.authors_model.index(self.authors_model.rowCount() -1)
         self.sync_list_and_objects()
         return new_author
 
@@ -77,8 +71,6 @@ class Window(QMainWindow, Ui_MainWindow):
         new_list_item = QStandardItem(name)
         self.doc_item_list.append(new_list_item)
         self.parentItem.appendRow(new_list_item)
-        # for i in authors:
-        #     new_list_item.appendRow(QStandardItem(i.author_name))
         self.columnView.setModel(self.disp_model)
         return new_document
         
@@ -91,7 +83,6 @@ class Window(QMainWindow, Ui_MainWindow):
             with open(selected_files[0], mode='r', newline='') as f:
                 csvreader = csv.DictReader(f)
                 self.recipients = []
-                # print(csvreader[0])
                 batch = []
                 for row in csvreader:
                     batch.append(row)
@@ -169,8 +160,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.documents.append(self.load_document('testdoc', 'this is a test'))
         self.make_author('Joe', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], self.documents[-1])
         self.make_author('Joe2', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], self.documents[-1])
-
-# make it so that when it makes a new author it attaches them to a document. Docs first, authors second!
 
     def test(self):
         self.test_set()
