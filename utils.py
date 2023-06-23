@@ -5,7 +5,7 @@ from typing import Any
 document_types = []
 
 class AuthorStyle:
-    def __init__(self, name, lines: list, document_type: str) -> None:
+    def __init__(self, name, lines: list, document_type) -> None:
         self.author_name = name
         self.lines = lines
         self.document_writes = document_type

@@ -20,7 +20,7 @@ class Window(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.connectSignalsSlots()
-        self.authors = []
+        # self.authors = []
         self.documents = []
         self.recipients = []
         self.disp_model = QStandardItemModel()
@@ -42,9 +42,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.actionAdd_Author_Style.triggered.connect(self.placeholder_command)
         self.actionAssign_Author_Style.triggered.connect(self.placeholder_command)
         self.actionHook_Up_API.triggered.connect(self.placeholder_command)
+        self.actionAttach.triggered.connect(self.placeholder_command)
         # self.action.triggered.connect(self.placeholder_command)
         
-        self.pushButtonAttach.clicked.connect(self.placeholder_command)
+        # self.pushButtonAttach.clicked.connect(self.placeholder_command)
         self.pushButtonPrev.clicked.connect(self.placeholder_command)
         self.pushButtonSend.clicked.connect(self.placeholder_command)
         self.pushButtonNext.clicked.connect(self.placeholder_command)
@@ -53,10 +54,22 @@ class Window(QMainWindow, Ui_MainWindow):
     def placeholder_command(self):
         print('event triggered')
 
-    def make_author(self, name, lines: list, document_type: str):
+    def sync_list_and_objects(self):
+        self.disp_model = QStandardItemModel()
+        self.parentItem = self.disp_model.invisibleRootItem()
+        for i in self.documents:
+            new_list_item = QStandardItem(i.doc_name)
+            self.parentItem.appendRow(new_list_item)
+            for j in i.doc_authors:
+                new_list_item.appendRow(QStandardItem(j.author_name))
+        self.columnView.setModel(self.disp_model)
+
+
+    def make_author(self, name, lines: list, document_type):
         new_author = AuthorStyle(name, lines, document_type)
         # self.authors_model.insertRow(self.authors_model.rowCount())
-        # self.authors_model.setData(self.authors_model.index(self.authors_model.rowCount() -1), name)
+        # self.authors_model.setData(self.authors_model.index(self.authors_model.rowCount() -1)
+        self.sync_list_and_objects()
         return new_author
 
     def load_document(self, name, description, authors):
@@ -66,6 +79,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.parentItem.appendRow(new_list_item)
         for i in authors:
             new_list_item.appendRow(QStandardItem(i.author_name))
+        self.columnView.setModel(self.disp_model)
         return new_document
         
     def load_batch(self, filepath=None):
@@ -114,12 +128,12 @@ class Window(QMainWindow, Ui_MainWindow):
                 selected_files = self.dialog.selectedFiles()
             self.save_location = selected_files[0]
             with open(selected_files[0], mode='w') as f:
-                json_data = {'save_location': self.save_location, 'documents': self.documents, 'authors': self.authors}
+                json_data = {'save_location': self.save_location, 'documents': self.documents}
                 json.dump(json_data, f, ensure_ascii=False, indent=4, cls=CustomEncoder)
         else:
             self.save_location = filepath
             with open(filepath, mode='w') as f:
-                json_data = {'save_location': self.save_location, 'documents': self.documents, 'authors': self.authors}
+                json_data = {'save_location': self.save_location, 'documents': self.documents}
                 json.dump(json_data, f, ensure_ascii=False, indent=4, cls=CustomEncoder)
 
     def quicksave(self):
@@ -132,16 +146,15 @@ class Window(QMainWindow, Ui_MainWindow):
             pass
 
     def open_set(self, filepath=None):
-        self.authors = []
+        # self.authors = []
         self.documents = []
         def load_json_data(data):
-            for i in data['authors']:
-                self.authors.append(AuthorStyle(i['author_name'], i['lines'], i['document_writes']))
+            # for i in data['authors']:
+            #     self.authors.append(AuthorStyle(i['author_name'], i['lines'], i['document_writes']))
             for i in data['documents']:
                 author_list = []
-                for j in self.authors:
-                    if i['doc_name'] == j.document_writes:
-                        author_list.append(j)
+                for j in i['doc_authors']:
+                    author_list.append(AuthorStyle(j['author_name'], j['lines'], j['document_writes']))
                 self.documents.append(DocumentType(i['doc_name'], i['description'], author_list))
             
         if not filepath:
@@ -158,9 +171,12 @@ class Window(QMainWindow, Ui_MainWindow):
                 load_json_data(loaded_json)
 
     def test_set(self):
-        self.authors.append(self.make_author('Joe', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], 'testdoc'))
-        self.authors.append(self.make_author('Joe2', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], 'testdoc'))
-        self.documents.append(self.load_document('testdoc', 'this is a test', self.authors))
+        test_authors = []
+        test_authors.append(self.make_author('Joe', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], 'testdoc'))
+        test_authors.append(self.make_author('Joe2', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], 'testdoc'))
+        self.documents.append(self.load_document('testdoc', 'this is a test', test_authors))
+
+# make it so that when it makes a new author it attaches them to a document. Docs first, authors second!
 
     def test(self):
         self.test_set()
@@ -168,7 +184,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1.json')
         self.open_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1.json')
         self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test2.json')
-        self.authors.append(self.make_author('james', [['I', 'Me'], ['no', 'dont'], ['speak', 'talk']], 'testdoc'))
+        self.make_author('james', [['I', 'Me'], ['no', 'dont'], ['speak', 'talk']], self.documents[0].doc_name)
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)
