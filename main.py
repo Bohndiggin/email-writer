@@ -1,5 +1,4 @@
 import sys
-import typing
 import csv
 import json
 from json import JSONEncoder
@@ -8,18 +7,13 @@ from PyQt6 import QtCore
 from utils import *
 
 from PyQt6.QtWidgets import (
-    QApplication, QDialog, QFileDialog, QMainWindow, QMessageBox, QWidget
+    QApplication, QDialog, QFileDialog, QMainWindow, QMessageBox, QWidget, QColumnView
 )
+from PyQt6.QtCore import QStringListModel
 from PyQt6.uic import loadUi
+from PyQt6.QtGui import QStandardItemModel, QStandardItem
 
 from ui import Ui_MainWindow
-
-# class FileLoader(QDialog):
-#     def __init__(self, parent=None) -> None:
-#         super().__init__(parent)
-#         self.setupUi(self)
-
-
 
 class Window(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
@@ -29,11 +23,16 @@ class Window(QMainWindow, Ui_MainWindow):
         self.authors = []
         self.documents = []
         self.recipients = []
+        self.disp_model = QStandardItemModel()
+        self.parentItem = self.disp_model.invisibleRootItem()
+        self.doc_item_list = []
+        self.save_location = ''
+        self.columnView.setModel(self.disp_model)
 
     def connectSignalsSlots(self):
         self.actionNew_Set.triggered.connect(self.placeholder_command)
         self.actionOpen_Set.triggered.connect(self.open_set)
-        self.actionSave_Set.triggered.connect(self.placeholder_command)
+        self.actionSave_Set.triggered.connect(self.quicksave)
         self.actionSave_Set_As.triggered.connect(self.save_set)
         self.actionLoad_Batch.triggered.connect(self.load_batch)
         self.actionWrite_Emails.triggered.connect(self.placeholder_command)
@@ -49,34 +48,26 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushButtonPrev.clicked.connect(self.placeholder_command)
         self.pushButtonSend.clicked.connect(self.placeholder_command)
         self.pushButtonNext.clicked.connect(self.placeholder_command)
-        # self.pushButtonSend.clicked.connect(self.placeholder_command)
-
-        
+        # self.pushButtonSend.clicked.connect(self.placeholder_command)     
 
     def placeholder_command(self):
         print('event triggered')
 
     def make_author(self, name, lines: list, document_type: str):
         new_author = AuthorStyle(name, lines, document_type)
-        # self.authors.append(new_author)
+        # self.authors_model.insertRow(self.authors_model.rowCount())
+        # self.authors_model.setData(self.authors_model.index(self.authors_model.rowCount() -1), name)
         return new_author
 
     def load_document(self, name, description, authors):
         new_document = DocumentType(name, description, authors)
-        # self.documents.append(new_document)
+        new_list_item = QStandardItem(name)
+        self.doc_item_list.append(new_list_item)
+        self.parentItem.appendRow(new_list_item)
+        for i in authors:
+            new_list_item.appendRow(QStandardItem(i.author_name))
         return new_document
         
-    # def make_new_document(self, name, description):
-    #     new_document = DocumentType(name, description)
-    #     self.documents.append(new_document)
-
-    # def make_recipient(self, name, fillables_dictionary):
-    #     new_recipient = Recipient(name, fillables_dictionary=fillables_dictionary)
-    #     self.recipients.append(new_recipient)
-
-
-            
-
     def load_batch(self, filepath=None):
         if not filepath:
             self.dialog = QFileDialog()
@@ -121,13 +112,24 @@ class Window(QMainWindow, Ui_MainWindow):
             self.dialog.setFileMode(QFileDialog.FileMode.AnyFile)
             if self.dialog.exec():
                 selected_files = self.dialog.selectedFiles()
+            self.save_location = selected_files[0]
             with open(selected_files[0], mode='w') as f:
-                json_data = {'documents': self.documents, 'authors': self.authors}
+                json_data = {'save_location': self.save_location, 'documents': self.documents, 'authors': self.authors}
                 json.dump(json_data, f, ensure_ascii=False, indent=4, cls=CustomEncoder)
         else:
+            self.save_location = filepath
             with open(filepath, mode='w') as f:
-                json_data = {'documents': self.documents, 'authors': self.authors}
+                json_data = {'save_location': self.save_location, 'documents': self.documents, 'authors': self.authors}
                 json.dump(json_data, f, ensure_ascii=False, indent=4, cls=CustomEncoder)
+
+    def quicksave(self):
+        try:
+            print(self.save_location)
+            self.save_set(filepath=self.save_location)
+        except Exception as e:
+            print(e)
+        finally:
+            pass
 
     def open_set(self, filepath=None):
         self.authors = []
@@ -166,7 +168,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1.json')
         self.open_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1.json')
         self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test2.json')
-
+        self.authors.append(self.make_author('james', [['I', 'Me'], ['no', 'dont'], ['speak', 'talk']], 'testdoc'))
+        
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = Window()

@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'ignore\untitled.ui'
+# Form implementation generated from reading ui file 'ignore\untitledui2.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.2
 #
@@ -56,12 +56,9 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.label_2, 0, 1, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.listViewDocuments = QtWidgets.QListView(parent=self.layoutWidget1)
-        self.listViewDocuments.setObjectName("listViewDocuments")
-        self.horizontalLayout.addWidget(self.listViewDocuments)
-        self.listViewAuthors = QtWidgets.QListView(parent=self.layoutWidget1)
-        self.listViewAuthors.setObjectName("listViewAuthors")
-        self.horizontalLayout.addWidget(self.listViewAuthors)
+        self.columnView = QtWidgets.QColumnView(parent=self.layoutWidget1)
+        self.columnView.setObjectName("columnView")
+        self.horizontalLayout.addWidget(self.columnView)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
@@ -126,8 +123,6 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        MainWindow.setTabOrder(self.listViewDocuments, self.listViewAuthors)
-        MainWindow.setTabOrder(self.listViewAuthors, self.textEdit)
         MainWindow.setTabOrder(self.textEdit, self.pushButtonAttach)
         MainWindow.setTabOrder(self.pushButtonAttach, self.pushButtonPrev)
         MainWindow.setTabOrder(self.pushButtonPrev, self.pushButtonSend)
