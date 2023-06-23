@@ -3,16 +3,16 @@ import csv
 document_types = []
 
 class AuthorStyle:
-    def __init__(self, name, lines, document_types=[]) -> None:
+    def __init__(self, name, lines, document_type) -> None:
         self.name = name
         self.lines = lines
-        self.document_types = document_types
+        self.document_type = document_type
 
     def export_style(self):
         pass # makes csv of the style
 
     def __repr__(self) -> str:
-        return f'{self.name} is an author Style to be used in {self.document_types}'
+        return f'{self.name} is an author Style to be used in {self.document_type}'
 
 class DocumentType:
     def __init__(self, name, description, authors=[]) -> None:

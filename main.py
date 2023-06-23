@@ -1,5 +1,7 @@
 import sys
 import typing
+import csv
+import json
 
 from PyQt6 import QtCore
 from utils import *
@@ -23,13 +25,16 @@ class Window(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.connectSignalsSlots()
+        self.authors = []
+        self.documents = []
+        self.recipients = []
 
     def connectSignalsSlots(self):
         self.actionNew_Set.triggered.connect(self.placeholder_command)
         self.actionOpen_Set.triggered.connect(self.open_set)
         self.actionSave_Set.triggered.connect(self.placeholder_command)
         self.actionSave_Set_As.triggered.connect(self.placeholder_command)
-        self.actionLoad_Batch.triggered.connect(self.placeholder_command)
+        self.actionLoad_Batch.triggered.connect(self.load_batch)
         self.actionWrite_Emails.triggered.connect(self.placeholder_command)
         
         self.actionAdd_Document_Type.triggered.connect(self.placeholder_command)
@@ -50,14 +55,52 @@ class Window(QMainWindow, Ui_MainWindow):
     def placeholder_command(self):
         print('event triggered')
 
+    def make_author(self, name, lines, document_type):
+        new_author = AuthorStyle(name, lines, document_type)
+        self.authors.append(new_author) 
+
+    def load_document(self, name, description, authors):
+        new_document = DocumentType(name, description, authors)
+        self.documents.append(new_document) 
+        
+    # def make_new_document(self, name, description):
+    #     new_document = DocumentType(name, description)
+    #     self.documents.append(new_document)
+
+    # def make_recipient(self, name, fillables_dictionary):
+    #     new_recipient = Recipient(name, fillables_dictionary=fillables_dictionary)
+    #     self.recipients.append(new_recipient)
+
+
     def open_set(self):
         self.dialog = QFileDialog()
         self.dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
         if self.dialog.exec():
             selected_files = self.dialog.selectedFiles()
-        print(selected_files)
-        return selected_files
+        with open(selected_files[0], mode='r') as f:
+            print(f)
 
+    def load_batch(self):
+        self.dialog = QFileDialog()
+        self.dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        if self.dialog.exec():
+            selected_files = self.dialog.selectedFiles()
+        with open(selected_files[0], mode='r', newline='') as f:
+            csvreader = csv.DictReader(f)
+            self.recipients = []
+            # print(csvreader[0])
+            batch = []
+            for row in csvreader:
+                batch.append(row)
+            try:
+                for i in batch:
+                    self.recipients.append(Recipient(i['name'], fillables_dictionary=i))
+            except:
+                for i in range(len(batch)):
+                    self.recipients.append(Recipient(i, fillables_dictionary=batch[i]))
+            finally:
+                print(self.recipients[0])
+    
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
