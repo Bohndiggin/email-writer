@@ -1,24 +1,26 @@
 import csv
+from json import JSONEncoder
+from typing import Any
 
 document_types = []
 
 class AuthorStyle:
-    def __init__(self, name, lines, document_type) -> None:
-        self.name = name
+    def __init__(self, name, lines: list, document_type: str) -> None:
+        self.author_name = name
         self.lines = lines
-        self.document_type = document_type
+        self.document_writes = document_type
 
     def export_style(self):
         pass # makes csv of the style
 
     def __repr__(self) -> str:
-        return f'{self.name} is an author Style to be used in {self.document_type}'
+        return f'{self.name} is an author Style'
 
 class DocumentType:
     def __init__(self, name, description, authors=[]) -> None:
-        self.name = name
+        self.doc_name = name
         self.description = description
-        self.authors = authors # A list of author styles since they'll be only for one document
+        self.doc_authors = authors # A list of author styles since they'll be only for one document
         # self.form_fillables = []
     
     def __repr__(self) -> str:
@@ -31,14 +33,16 @@ class DocumentType:
         pass
 
 class Recipient:
-    def __init__(self, name, fillables_dictionary={}) -> None:
+    def __init__(self, name, fillables_dictionary: dict) -> None:
         self.name = name
         self.fillables_dictionary = fillables_dictionary
 
     def __repr__(self) -> str:
         return f'{self.name}: a recipient.'
 
-
+class CustomEncoder(JSONEncoder):
+    def default(self, o) -> Any:
+        return o.__dict__
 
 def read_in_author_style():
     pass
