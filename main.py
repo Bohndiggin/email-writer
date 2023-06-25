@@ -15,6 +15,7 @@ from PyQt6.QtGui import QStandardItemModel, QStandardItem
 
 from ui import Ui_MainWindow
 from uidiag import Ui_Dialog
+import uidiag2
 
 class AddDocumentDialog(QDialog, Ui_Dialog):
     def __init__(self, parent: QWidget) -> None:
@@ -25,14 +26,14 @@ class AddDocumentDialog(QDialog, Ui_Dialog):
         data = [self.lineEdit.text(), self.lineEdit_2.text()]
         return data
 
-# class AddAuthorStyleDialog(QDialog, Ui_Dialog_Author):
-#     def __init__(self, parent: QWidget) -> None:
-#         super().__init__(parent)
-#         self.setupUi(self)
+class AddAuthorStyleDialog(QDialog, uidiag2.Ui_Dialog):
+    def __init__(self, parent: QWidget) -> None:
+        super().__init__(parent)
+        self.setupUi(self)
 
-#     def get_data(self):
-#         data = [self.lineEdit.text(), self.lineEdit_2.text()]
-#         return data
+    def get_data(self):
+        data = self.lineEdit.text()
+        return data
     
 class Window(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
@@ -221,7 +222,11 @@ class Window(QMainWindow, Ui_MainWindow):
             for row in style_lines:
                 cleaned_row = [i for i in row if i != '']
                 output.append(cleaned_row)
-            self.make_author(f'Author #{self.author_count}', output, self.documents[-1])
+            self.dialog = AddAuthorStyleDialog(self)
+            self.dialog.setModal(True)
+            if self.dialog.exec() == QDialog.DialogCode.Accepted:
+                data_recieved = self.dialog.get_data()
+            self.make_author(data_recieved, output, self.documents[-1])
         if not filepath:
             self.dialog = QFileDialog()
             self.dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
