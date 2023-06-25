@@ -25,7 +25,7 @@ class DocumentType:
         # print(self.doc_authors)
     
     def __repr__(self) -> str:
-        return f'{self.doc_name}: {self.description}, with Author Styles: {self.doc_authors}'
+        return f'{self.doc_name}: {self.description}'
     
     def build_fillables(self):
         pass # will build a list of fillables based on self.authors???

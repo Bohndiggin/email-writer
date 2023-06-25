@@ -27,12 +27,13 @@ class AddDocumentDialog(QDialog, Ui_Dialog):
         return data
 
 class AddAuthorStyleDialog(QDialog, uidiag2.Ui_Dialog):
-    def __init__(self, parent: QWidget) -> None:
+    def __init__(self, parent: QWidget, documents_to_write) -> None:
         super().__init__(parent)
         self.setupUi(self)
+        self.comboBox.addItems(documents_to_write)
 
     def get_data(self):
-        data = self.lineEdit.text()
+        data = [self.lineEdit.text(), self.comboBox.currentIndex()]
         return data
     
 class Window(QMainWindow, Ui_MainWindow):
@@ -222,11 +223,12 @@ class Window(QMainWindow, Ui_MainWindow):
             for row in style_lines:
                 cleaned_row = [i for i in row if i != '']
                 output.append(cleaned_row)
-            self.dialog = AddAuthorStyleDialog(self)
+            doc_names_list = [str(x) for x in self.documents]
+            self.dialog = AddAuthorStyleDialog(self, doc_names_list)
             self.dialog.setModal(True)
             if self.dialog.exec() == QDialog.DialogCode.Accepted:
                 data_recieved = self.dialog.get_data()
-            self.make_author(data_recieved, output, self.documents[-1])
+            self.make_author(data_recieved[0], output, self.documents[data_recieved[1]])
         if not filepath:
             self.dialog = QFileDialog()
             self.dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
