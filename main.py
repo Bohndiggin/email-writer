@@ -211,6 +211,8 @@ class Window(QMainWindow, Ui_MainWindow):
             with open(filepath, mode='r') as f:
                 loaded_json = json.load(f)
                 load_json_data(loaded_json)
+        print(self.documents)
+        self.sync_list_and_objects()
 
     def test_set(self):
         self.make_document('testdoc', 'this is a test')
@@ -221,7 +223,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.test_set()
         self.load_batch(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1.csv')
         self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1.json')
-        self.open_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1.json')
+        self.open_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test2.json')
         self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test2.json')
         self.make_author('james', [['I', 'Me'], ['no', 'dont'], ['speak', 'talk']], self.documents[0])
         self.quicksave()
@@ -229,6 +231,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.quicksave()
         self.new_author_style(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1_author_style.csv')
         self.quicksave()
+        pass
     
     def new_doc_type(self):
         self.dialog = AddDocumentDialog(self)
@@ -274,11 +277,12 @@ class Window(QMainWindow, Ui_MainWindow):
             index = [self.doc_selected, self.author_selected_index]
             self.author_selected = self.documents[index[0]].doc_authors[index[1]]
             self.emails = []
-            for i in self.recipients:
-                self.emails.append(self.author_selected.write(i))
-            print(self.emails)
-            self.show_document()
-            print(len(self.emails))
+            if self.recipients == []:
+                print('No Recipients!!')
+            else:
+                for i in self.recipients:
+                    self.emails.append(self.author_selected.write(i))
+                self.show_document()
         except Exception as e:
             print(e)
         
@@ -330,8 +334,9 @@ class Window(QMainWindow, Ui_MainWindow):
             data_recieved = self.dialog.get_data()
         for i in self.documents:
             for j in i.doc_authors:
-                if author_list[data_recieved] == j.author_name:
+                if author_list[data_recieved[0]][:-19] == j.author_name:
                     i.remove_author(j)
+                    break
 
     def delete_document(self):
         pass
@@ -341,5 +346,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = Window()
     win.show()
-    win.test()
+    # win.test()
     sys.exit(app.exec())
