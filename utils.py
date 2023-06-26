@@ -22,8 +22,8 @@ class AuthorStyle:
         for i in self.lines:
             line = random.choice(i)
             document.append(line)
-        assembled_document = ' '.join(document) + '\n\nThis Email was made with email-writer: https://github.com/Bohndiggin/email-writer'
-        formatted_document = assembled_document.format(**recipient.fillables_dictionary)
+        assembled_document = ' '.join(document)# + '\n\nThis Email was made with email-writer: https://github.com/Bohndiggin/email-writer'
+        formatted_document = assembled_document.format(**recipient.fillables_dictionary).replace('\\n', '\n')
         return formatted_document
 
     def __repr__(self) -> str:
@@ -37,8 +37,6 @@ class DocumentType:
             self.doc_name = 'Document: ' + name
         self.description = description
         self.doc_authors = [] # A list of author styles since they'll be only for one document
-        # self.form_fillables = []
-        # print(self.doc_authors)
     
     def __repr__(self) -> str:
         return f'{self.doc_name}: {self.description}'
@@ -61,16 +59,3 @@ class Recipient:
 class CustomEncoder(JSONEncoder):
     def default(self, o) -> Any:
         return o.__dict__
-
-# def read_in_author_style():
-#     pass
-
-# def read_in_recipient_data():
-#     pass #Builds list of recipients and fills the dictionary with the form fillables
-
-# def author(doc, style, recipient):
-#     pass # Take doc type, fill recipient data, build using style
-
-# def broker(doc, style, recipients):
-#     pass # Will call author for each document needed to be written, should/can be multiprocessed??
-

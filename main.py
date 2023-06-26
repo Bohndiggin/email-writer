@@ -151,7 +151,6 @@ class Window(QMainWindow, Ui_MainWindow):
              with open(filepath, mode='r', newline='') as f:
                 csvreader = csv.DictReader(f)
                 self.recipients = []
-                # print(csvreader[0])
                 batch = []
                 for row in csvreader:
                     batch.append(row)
@@ -290,7 +289,6 @@ class Window(QMainWindow, Ui_MainWindow):
         except Exception as e:
             print(e)
         
-
     def on_columnView_clicked(self, index):
         print(index.data())
         string_selcted = index.data()
@@ -327,7 +325,7 @@ class Window(QMainWindow, Ui_MainWindow):
         email_to_send = self.emails[index_of_email]
         recipient_to_recieve = self.recipients[index_of_email]
         target_email = recipient_to_recieve.fillables_dictionary['email_address']
-        subject = self.documents[self.selected_document_viewing].doc_name[9:]
+        subject = self.documents[self.doc_selected].doc_name[9:]
         sent_address = os.getenv('EMAIL_ADDRESS')
         try:
             server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -364,5 +362,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = Window()
     win.show()
-    win.test()
+    # win.test()
     sys.exit(app.exec())
