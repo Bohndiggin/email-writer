@@ -2,6 +2,9 @@ import sys
 import csv
 import json
 import typing
+import smtplib
+from dotenv import load_dotenv
+import os
 
 from PyQt6 import QtCore
 
@@ -17,6 +20,7 @@ from ui import Ui_MainWindow
 from uidiag import Ui_Dialog
 import uidiag2
 import uidiag3
+
 
 class AddDocumentDialog(QDialog, Ui_Dialog):
     def __init__(self, parent: QWidget) -> None:
@@ -319,8 +323,20 @@ class Window(QMainWindow, Ui_MainWindow):
         self.show_document()
 
     def send_email(self):
-        email_to_send = self.emails[self.selected_document_viewing]
-        print(email_to_send)
+        index_of_email = self.selected_document_viewing
+        email_to_send = self.emails[index_of_email]
+        recipient_to_recieve = self.recipients[index_of_email]
+        target_email = recipient_to_recieve.fillables_dictionary['email_address']
+        subject = 'a test email'
+        try:
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login("bohndiggin@gmail.com", os.getenv('EMAIL_SECRET'))
+            server.sendmail('bohndiggin@gmail.com', target_email, f"Subject: {subject}\n\n{email_to_send}")
+            server.quit()
+            print("Email sent successfully")
+        except Exception as e:
+            print(f"Error: {e}")
 
     def delete_author(self):
         author_list = []
@@ -343,6 +359,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
         
 if __name__ == '__main__':
+    load_dotenv()
     app = QApplication(sys.argv)
     win = Window()
     win.show()
