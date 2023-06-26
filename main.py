@@ -327,12 +327,13 @@ class Window(QMainWindow, Ui_MainWindow):
         email_to_send = self.emails[index_of_email]
         recipient_to_recieve = self.recipients[index_of_email]
         target_email = recipient_to_recieve.fillables_dictionary['email_address']
-        subject = 'a test email'
+        subject = self.documents[self.selected_document_viewing].doc_name[9:]
+        sent_address = os.getenv('EMAIL_ADDRESS')
         try:
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.starttls()
-            server.login("bohndiggin@gmail.com", os.getenv('EMAIL_SECRET'))
-            server.sendmail('bohndiggin@gmail.com', target_email, f"Subject: {subject}\n\n{email_to_send}")
+            server.login(sent_address, os.getenv('EMAIL_SECRET'))
+            server.sendmail(sent_address, target_email, f"Subject: {subject}\n\n{email_to_send}")
             server.quit()
             print("Email sent successfully")
         except Exception as e:
