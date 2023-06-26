@@ -224,18 +224,18 @@ class Window(QMainWindow, Ui_MainWindow):
         self.make_author('Joe2', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], self.documents[0])
 
     def test(self):
-        self.test_set()
+        # self.test_set()
         self.load_batch(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1.csv')
-        self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1.json')
-        self.open_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test2.json')
-        self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test2.json')
-        self.make_author('james', [['I', 'Me'], ['no', 'dont'], ['speak', 'talk']], self.documents[0])
-        self.quicksave()
-        self.make_document('sss', 'ssa')
-        self.quicksave()
-        self.new_author_style(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1_author_style.csv')
-        self.quicksave()
-        pass
+        # self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1.json')
+        self.open_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/testWORK.json')
+        # self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test2.json')
+        # self.make_author('james', [['I', 'Me'], ['no', 'dont'], ['speak', 'talk']], self.documents[0])
+        # self.quicksave()
+        # self.make_document('sss', 'ssa')
+        # self.quicksave()
+        # self.new_author_style(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1_author_style.csv')
+        # self.quicksave()
+        # pass
     
     def new_doc_type(self):
         self.dialog = AddDocumentDialog(self)
@@ -363,5 +363,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = Window()
     win.show()
-    # win.test()
+    win.test()
     sys.exit(app.exec())

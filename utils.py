@@ -21,9 +21,10 @@ class AuthorStyle:
         document = []
         for i in self.lines:
             line = random.choice(i)
-            line.format(**recipient.fillables_dictionary)
             document.append(line)
-        return ' '.join(document) + '\n\n This Email was made with email-writer: https://github.com/Bohndiggin/email-writer'
+        assembled_document = ' '.join(document) + '\n\nThis Email was made with email-writer: https://github.com/Bohndiggin/email-writer'
+        formatted_document = assembled_document.format(**recipient.fillables_dictionary)
+        return formatted_document
 
     def __repr__(self) -> str:
         return f'{self.author_name} is an author Style'
