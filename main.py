@@ -11,11 +11,12 @@ from PyQt6.QtWidgets import (
     QApplication, QFileDialog, QMainWindow, QDialog, QWidget
 )
 from PyQt6.uic import loadUi
-from PyQt6.QtGui import QStandardItemModel, QStandardItem
+from PyQt6.QtGui import QStandardItemModel, QStandardItem, QTextCursor
 
 from ui import Ui_MainWindow
 from uidiag import Ui_Dialog
 import uidiag2
+import uidiag3
 
 class AddDocumentDialog(QDialog, Ui_Dialog):
     def __init__(self, parent: QWidget) -> None:
@@ -36,6 +37,16 @@ class AddAuthorStyleDialog(QDialog, uidiag2.Ui_Dialog):
         data = [self.lineEdit.text(), self.comboBox.currentIndex()]
         return data
     
+class RemoveAuthorDialog(QDialog, uidiag3.Ui_Dialog):
+    def __init__(self, parent: QWidget, author_list: list) -> None:
+        super().__init__(parent)
+        self.setupUi(self)
+        self.comboBox.addItems(author_list)
+
+    def get_data(self):
+        data = [self.comboBox.currentIndex()]
+        return data
+    
 class Window(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -53,6 +64,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.author_selected_index = 0
         self.author_selected = None
         self.emails = []
+        self.text_cursor = QTextCursor(self.textEdit.document())
+        self.selected_document_viewing = 0
 
 
     def connectSignalsSlots(self):
@@ -66,15 +79,16 @@ class Window(QMainWindow, Ui_MainWindow):
         self.actionAdd_Document_Type.triggered.connect(self.new_doc_type)
         self.actionAdd_Document_Set.triggered.connect(self.placeholder_command)
         self.actionAdd_Author_Style.triggered.connect(self.new_author_style)
+        self.actionRemove_Author_Style.triggered.connect(self.delete_author)
         self.actionAssign_Author_Style.triggered.connect(self.placeholder_command)
         self.actionHook_Up_API.triggered.connect(self.placeholder_command)
         self.actionAttach.triggered.connect(self.placeholder_command)
         # self.action.triggered.connect(self.placeholder_command)
         
         # self.pushButtonAttach.clicked.connect(self.placeholder_command)
-        self.pushButtonPrev.clicked.connect(self.placeholder_command)
-        self.pushButtonSend.clicked.connect(self.placeholder_command)
-        self.pushButtonNext.clicked.connect(self.placeholder_command)
+        self.pushButtonPrev.clicked.connect(self.previous_document)
+        self.pushButtonSend.clicked.connect(self.send_email)
+        self.pushButtonNext.clicked.connect(self.next_document)
         # self.pushButtonSend.clicked.connect(self.placeholder_command)
         self.columnView.clicked.connect(self.on_columnView_clicked)  
 
@@ -98,7 +112,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.sync_list_and_objects()
         return new_author
 
-    def load_document(self, name, description):
+    def make_document(self, name, description):
         self.documents.append(DocumentType(name, description))
         new_list_item = QStandardItem(name)
         self.doc_item_list.append(new_list_item)
@@ -199,7 +213,7 @@ class Window(QMainWindow, Ui_MainWindow):
                 load_json_data(loaded_json)
 
     def test_set(self):
-        self.load_document('testdoc', 'this is a test')
+        self.make_document('testdoc', 'this is a test')
         self.make_author('Joe', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], self.documents[0])
         self.make_author('Joe2', [['huh', 'how'], ['are', 'you'], ['doing', 'me', 'favor']], self.documents[0])
 
@@ -211,7 +225,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.save_set(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test2.json')
         self.make_author('james', [['I', 'Me'], ['no', 'dont'], ['speak', 'talk']], self.documents[0])
         self.quicksave()
-        self.load_document('sss', 'ssa')
+        self.make_document('sss', 'ssa')
         self.quicksave()
         self.new_author_style(filepath='C:/Users/bohnd/Documents/email-tool-2/ignore/test1_author_style.csv')
         self.quicksave()
@@ -221,7 +235,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.dialog.setModal(True)
         if self.dialog.exec() == QDialog.DialogCode.Accepted:
             data_recieved = self.dialog.get_data()
-        self.load_document(data_recieved[0], data_recieved[1])
+        self.make_document(data_recieved[0], data_recieved[1])
 
     def new_author_style(self, filepath=None):
         def author_extract(style_lines):
@@ -263,6 +277,8 @@ class Window(QMainWindow, Ui_MainWindow):
             for i in self.recipients:
                 self.emails.append(self.author_selected.write(i))
             print(self.emails)
+            self.show_document()
+            print(len(self.emails))
         except Exception as e:
             print(e)
         
@@ -276,6 +292,50 @@ class Window(QMainWindow, Ui_MainWindow):
             self.doc_selected = index.row()
         else:
             print('oops')
+    
+    def show_document(self):
+        self.textEdit.clear()
+        try:
+            self.textEdit.insertPlainText(self.emails[self.selected_document_viewing])
+        except Exception as e:
+            print(e)
+
+    def previous_document(self):
+        if self.selected_document_viewing > 0:
+            self.selected_document_viewing -= 1
+        else:
+            pass
+        self.show_document()
+    
+    def next_document(self):
+        if self.selected_document_viewing < len(self.emails)-1:
+            self.selected_document_viewing += 1
+        else:
+            pass
+        self.show_document()
+
+    def send_email(self):
+        email_to_send = self.emails[self.selected_document_viewing]
+        print(email_to_send)
+
+    def delete_author(self):
+        author_list = []
+        for i in self.documents:
+            for j in i.doc_authors:
+                author_list.append(j)
+        author_list = [str(x) for x in author_list]
+        self.dialog = RemoveAuthorDialog(self, author_list=author_list)
+        self.dialog.setModal(True)
+        if self.dialog.exec() == QDialog.DialogCode.Accepted:
+            data_recieved = self.dialog.get_data()
+        for i in self.documents:
+            for j in i.doc_authors:
+                if author_list[data_recieved] == j.author_name:
+                    i.remove_author(j)
+
+    def delete_document(self):
+        pass
+
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)

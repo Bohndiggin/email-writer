@@ -98,11 +98,14 @@ class Ui_MainWindow(object):
         self.actionNew_Set.setObjectName("actionNew_Set")
         self.actionAttach = QtGui.QAction(parent=MainWindow)
         self.actionAttach.setObjectName("actionAttach")
+        self.actionRemove_Author_Style = QtGui.QAction(parent=MainWindow)
+        self.actionRemove_Author_Style.setObjectName("actionRemove_Author_Style")
         self.menuDocuments.addAction(self.actionAdd_Document_Type)
         self.menuDocuments.addAction(self.actionAdd_Document_Set)
         self.menuDocuments.addAction(self.actionRemove_Document_Type)
         self.menuAuthors.addAction(self.actionAdd_Author_Style)
         self.menuAuthors.addAction(self.actionAssign_Author_Style)
+        self.menuAuthors.addAction(self.actionRemove_Author_Style)
         self.menuFile.addAction(self.menuDocuments.menuAction())
         self.menuFile.addAction(self.menuAuthors.menuAction())
         self.menuFile.addSeparator()
@@ -149,6 +152,7 @@ class Ui_MainWindow(object):
         self.actionHook_Up_API.setText(_translate("MainWindow", "Hook Up API"))
         self.actionNew_Set.setText(_translate("MainWindow", "New Set"))
         self.actionAttach.setText(_translate("MainWindow", "Attach..."))
+        self.actionRemove_Author_Style.setText(_translate("MainWindow", "Remove Author Style..."))
 
 
 if __name__ == "__main__":

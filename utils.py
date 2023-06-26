@@ -7,7 +7,10 @@ document_types = []
 
 class AuthorStyle:
     def __init__(self, name, lines: list, document_type):
-        self.author_name = 'Author: ' + name
+        if 'Author: ' == name[0:8]:
+            self.author_name = name
+        else:
+            self.author_name = 'Author: ' + name
         self.lines = lines
         document_type.doc_authors.append(self)
 
@@ -20,14 +23,17 @@ class AuthorStyle:
             line = random.choice(i)
             line.format(**recipient.fillables_dictionary)
             document.append(line)
-        return document
+        return ' '.join(document)
 
     def __repr__(self) -> str:
         return f'{self.author_name} is an author Style'
 
 class DocumentType:
     def __init__(self, name, description) -> None:
-        self.doc_name = 'Document: ' + name
+        if 'Document: ' == name[0:10]:
+            self.doc_name = name
+        else:
+            self.doc_name = 'Document: ' + name
         self.description = description
         self.doc_authors = [] # A list of author styles since they'll be only for one document
         # self.form_fillables = []
@@ -38,9 +44,10 @@ class DocumentType:
     
     def build_fillables(self):
         pass # will build a list of fillables based on self.authors???
-    
-    def export_document(self):
-        pass
+
+    def remove_author(self, author):
+        self.doc_authors.pop(self.doc_authors.index(author))
+        print(self.doc_authors)
 
 class Recipient:
     def __init__(self, name, fillables_dictionary: dict) -> None:
@@ -54,15 +61,15 @@ class CustomEncoder(JSONEncoder):
     def default(self, o) -> Any:
         return o.__dict__
 
-def read_in_author_style():
-    pass
+# def read_in_author_style():
+#     pass
 
-def read_in_recipient_data():
-    pass #Builds list of recipients and fills the dictionary with the form fillables
+# def read_in_recipient_data():
+#     pass #Builds list of recipients and fills the dictionary with the form fillables
 
-def author(doc, style, recipient):
-    pass # Take doc type, fill recipient data, build using style
+# def author(doc, style, recipient):
+#     pass # Take doc type, fill recipient data, build using style
 
-def broker(doc, style, recipients):
-    pass # Will call author for each document needed to be written, should/can be multiprocessed??
+# def broker(doc, style, recipients):
+#     pass # Will call author for each document needed to be written, should/can be multiprocessed??
 
