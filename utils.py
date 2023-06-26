@@ -1,4 +1,5 @@
 import csv
+import random
 from json import JSONEncoder
 from typing import Any
 
@@ -6,19 +7,27 @@ document_types = []
 
 class AuthorStyle:
     def __init__(self, name, lines: list, document_type):
-        self.author_name = name
+        self.author_name = 'Author: ' + name
         self.lines = lines
         document_type.doc_authors.append(self)
 
     def export_style(self):
         pass # makes csv of the style
 
+    def write(self, recipient):
+        document = []
+        for i in self.lines:
+            line = random.choice(i)
+            line.format(**recipient.fillables_dictionary)
+            document.append(line)
+        return document
+
     def __repr__(self) -> str:
         return f'{self.author_name} is an author Style'
 
 class DocumentType:
     def __init__(self, name, description) -> None:
-        self.doc_name = name
+        self.doc_name = 'Document: ' + name
         self.description = description
         self.doc_authors = [] # A list of author styles since they'll be only for one document
         # self.form_fillables = []

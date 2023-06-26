@@ -49,6 +49,11 @@ class Window(QMainWindow, Ui_MainWindow):
         self.save_location = ''
         self.author_count = 0
         self.columnView.setModel(self.disp_model)
+        self.doc_selected = 0
+        self.author_selected_index = 0
+        self.author_selected = None
+        self.emails = []
+
 
     def connectSignalsSlots(self):
         self.actionNew_Set.triggered.connect(self.placeholder_command)
@@ -56,7 +61,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.actionSave_Set.triggered.connect(self.quicksave)
         self.actionSave_Set_As.triggered.connect(self.save_set)
         self.actionLoad_Batch.triggered.connect(self.load_batch)
-        self.actionWrite_Emails.triggered.connect(self.placeholder_command)
+        self.actionWrite_Emails.triggered.connect(self.write_emails)
         
         self.actionAdd_Document_Type.triggered.connect(self.new_doc_type)
         self.actionAdd_Document_Set.triggered.connect(self.placeholder_command)
@@ -70,7 +75,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushButtonPrev.clicked.connect(self.placeholder_command)
         self.pushButtonSend.clicked.connect(self.placeholder_command)
         self.pushButtonNext.clicked.connect(self.placeholder_command)
-        # self.pushButtonSend.clicked.connect(self.placeholder_command)     
+        # self.pushButtonSend.clicked.connect(self.placeholder_command)
+        self.columnView.clicked.connect(self.on_columnView_clicked)  
 
     def placeholder_command(self):
         print('event triggered')
@@ -247,6 +253,29 @@ class Window(QMainWindow, Ui_MainWindow):
                     author_extract(style_lines)
             except Exception as e:
                 print(e)
+
+    def write_emails(self):
+        # print(self.columnView.selectionModel().selectedIndexes())
+        try:
+            index = [self.doc_selected, self.author_selected_index]
+            self.author_selected = self.documents[index[0]].doc_authors[index[1]]
+            self.emails = []
+            for i in self.recipients:
+                self.emails.append(self.author_selected.write(i))
+            print(self.emails)
+        except Exception as e:
+            print(e)
+        
+
+    def on_columnView_clicked(self, index):
+        print(index.data())
+        string_selcted = index.data()
+        if 'Author: ' == string_selcted[0:8]:
+            self.author_selected_index = index.row()
+        elif 'Document: ' == string_selcted[0:10]:
+            self.doc_selected = index.row()
+        else:
+            print('oops')
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)
