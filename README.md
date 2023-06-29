@@ -4,7 +4,13 @@ Email Writer takes a csv of recipients, a csv email style guide, then writes and
 
 ## Prep/Installation
 
-create a 
+1. Create a .env file with ```EMAIL_ADDRESS="youremail@example.com"```
+2. For Gmail accounts you need to go here https://myaccount.google.com/security
+3. Click on '2-Step Verification'
+4. Scroll to bottom and click on 'app passwords'
+5. Add a new password.
+6. copy password and add to the .env file as ```EMAIL_SECRET="password"```
+7. This authorizes email-writer to send an email on your behalf. DO NOT UPLOAD .env Keep it a secret.
 
 ## GENERAL USE
 
