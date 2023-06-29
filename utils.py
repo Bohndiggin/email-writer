@@ -22,7 +22,7 @@ class AuthorStyle:
         for i in self.lines:
             line = random.choice(i)
             document.append(line)
-        assembled_document = ' '.join(document)# + '\n\nThis Email was made with email-writer: https://github.com/Bohndiggin/email-writer'
+        assembled_document = ' '.join(document) + '\n\nThis Email was made with email-writer: https://github.com/Bohndiggin/email-writer'
         formatted_document = assembled_document.format(**recipient.fillables_dictionary).replace('\\n', '\n')
         return formatted_document
 
