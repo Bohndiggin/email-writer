@@ -13,22 +13,22 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(400, 95)
-        self.widget = QtWidgets.QWidget(parent=Dialog)
-        self.widget.setGeometry(QtCore.QRect(30, 20, 341, 56))
-        self.widget.setObjectName("widget")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.widget)
+        self.layoutWidget = QtWidgets.QWidget(parent=Dialog)
+        self.layoutWidget.setGeometry(QtCore.QRect(30, 20, 341, 56))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.layoutWidget)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.label = QtWidgets.QLabel(parent=self.widget)
+        self.label = QtWidgets.QLabel(parent=self.layoutWidget)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
-        self.comboBox = QtWidgets.QComboBox(parent=self.widget)
+        self.comboBox = QtWidgets.QComboBox(parent=self.layoutWidget)
         self.comboBox.setObjectName("comboBox")
         self.horizontalLayout.addWidget(self.comboBox)
         self.horizontalLayout_2.addLayout(self.horizontalLayout)
-        self.buttonBox = QtWidgets.QDialogButtonBox(parent=self.widget)
+        self.buttonBox = QtWidgets.QDialogButtonBox(parent=self.layoutWidget)
         self.buttonBox.setOrientation(QtCore.Qt.Orientation.Vertical)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Cancel|QtWidgets.QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
@@ -41,7 +41,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "Delete Author"))
         self.label.setText(_translate("Dialog", "Author to Delete"))
 
 

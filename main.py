@@ -241,7 +241,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.dialog.setModal(True)
         if self.dialog.exec() == QDialog.DialogCode.Accepted:
             data_recieved = self.dialog.get_data()
-        self.make_document(data_recieved[0], data_recieved[1])
+            try:
+                self.make_document(data_recieved[0], data_recieved[1])
+            except Exception as e:
+                print(e)
 
     def new_author_style(self, filepath=None):
         def author_extract(style_lines):
@@ -254,7 +257,10 @@ class Window(QMainWindow, Ui_MainWindow):
             self.dialog.setModal(True)
             if self.dialog.exec() == QDialog.DialogCode.Accepted:
                 data_recieved = self.dialog.get_data()
-            self.make_author(data_recieved[0], output, self.documents[data_recieved[1]])
+                try:
+                    self.make_author(data_recieved[0], output, self.documents[data_recieved[1]])
+                except Exception as e:
+                    print(e)
         if not filepath:
             self.dialog = QFileDialog()
             self.dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
