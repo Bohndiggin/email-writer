@@ -1,3 +1,6 @@
 __pycache__
 ignore
 .env
+build
+main.spec
+dist
